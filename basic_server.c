@@ -1,5 +1,14 @@
 #include "pipe_networking.h"
 
+char* toUpper(char input[]) {
+  char* start = input;
+  int i;
+  for (i = 0; i < strlen(input); i++) {
+    if (input[i] >= 'a' && input[i] <= 'z')
+      input[i] -= 32;
+    }
+  return start;
+}
 
 int main() {
 
@@ -7,4 +16,12 @@ int main() {
   int from_client;
 
   from_client = server_handshake( &to_client );
+
+  char clientmsg[HANDSHAKE_BUFFER_SIZE];
+  
+  while (1) {
+    read(from_client, clientmsg, HANDSHAKE_BUFFER_SIZE);
+    toUpper(clientmsg);
+    write(to_client, clientmsg, HANDSHAKE_BUFFER_SIZE);
+  }
 }
