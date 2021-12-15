@@ -27,8 +27,6 @@ int server_handshake(int *to_client) {
 
   printf("Connecting to client FIFO and sending initial acknowledgement message\n");
   *to_client = open(clientpid, O_WRONLY); //Server connects to client FIFO
-  char servermsg[HANDSHAKE_BUFFER_SIZE] = "mic check";
-  printf("Server message: %s\n", servermsg);
   int check = write(*to_client, servermsg, HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
   if (check <= 0) {
       printf("Error: %s",strerror(errno));
@@ -88,11 +86,9 @@ int client_handshake(int *to_server) {
 
 
   printf("Sending response to server\n");
-  char clientmsg[HANDSHAKE_BUFFER_SIZE] = "mic works!";
-  printf("Client message: %s\n", clientmsg);
   write(*to_server, clientmsg, HANDSHAKE_BUFFER_SIZE);
 
-  
+
   printf("Handshake success!\n");
 
   return from_server;
