@@ -109,12 +109,15 @@ int client_handshake(int *to_server) {
 
 
   char line[HANDSHAKE_BUFFER_SIZE];
-  printf("Input: ");
-  fgets(line, HANDSHAKE_BUFFER_SIZE, stdin);
-  write(*to_server, line, HANDSHAKE_BUFFER_SIZE);
-  read(from_server, servermsg, HANDSHAKE_BUFFER_SIZE);
-  printf("Processed message: %s\n", servermsg);
 
-  
+  while (1) {
+    printf("Input: ");
+    fgets(line, HANDSHAKE_BUFFER_SIZE, stdin);
+    write(*to_server, line, HANDSHAKE_BUFFER_SIZE);
+    read(from_server, servermsg, HANDSHAKE_BUFFER_SIZE);
+    printf("Processed message: %s\n", servermsg);
+  }
+
+
   return from_server;
 }
