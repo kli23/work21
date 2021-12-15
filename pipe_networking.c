@@ -18,12 +18,13 @@ char* toUpper(char input[]) {
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
+  int from_client = 0;
+  mkfifo(WKP, 0644); // server creates a WKP and waits for connection
+  printf("WKP made, waiting for connection\n");
+
+
   while (1) {
-    int from_client = 0;
-    mkfifo(WKP, 0644); // server creates a WKP and waits for connection
-    printf("WKP made, waiting for connection\n");
-
-
+    
     from_client = open(WKP, O_RDONLY);
     char clientpid[HANDSHAKE_BUFFER_SIZE];
     int received = read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE); // server receives client's msg (it's pid) and removes WKP
