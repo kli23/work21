@@ -17,7 +17,7 @@ int main() {
 
   from_client = server_handshake( &to_client );
 
-  char clientmsgBUFFER_SIZE];
+  char clientmsg[BUFFER_SIZE];
 
   while (1) {
     read(from_client, clientmsg, BUFFER_SIZE);
