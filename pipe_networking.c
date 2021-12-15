@@ -18,42 +18,44 @@ char* toUpper(char input[]) {
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
-  int from_client = 0;
-  mkfifo(WKP, 0644); // server creates a WKP and waits for connection
-  printf("WKP made, waiting for connection\n");
-
-
-  from_client = open(WKP, O_RDONLY);
-  char clientpid[HANDSHAKE_BUFFER_SIZE];
-  int received = read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE); // server receives client's msg (it's pid) and removes WKP
-  if (received == -1) {
-      printf("Error: %s",strerror(errno));
-      return 0;
-  }
-  printf("Client message received. Pid: %s. Removing WKP\n", clientpid);
-  remove(WKP);
-
-
-  printf("Connecting to client FIFO and sending initial acknowledgement message\n");
-  *to_client = open(clientpid, O_WRONLY); //Server connects to client FIFO
-  int check = write(*to_client, "to client", HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
-  if (check <= 0) {
-      printf("Error: %s",strerror(errno));
-      return 0;
-  }
-
-
-  read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
-  printf("Received client message: %s\n", clientpid);
-
-
-  printf("Handshake success!\n");
-
-
   while (1) {
+    int from_client = 0;
+    mkfifo(WKP, 0644); // server creates a WKP and waits for connection
+    printf("WKP made, waiting for connection\n");
+
+
+    from_client = open(WKP, O_RDONLY);
+    char clientpid[HANDSHAKE_BUFFER_SIZE];
+    int received = read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE); // server receives client's msg (it's pid) and removes WKP
+    if (received == -1) {
+      printf("Error: %s",strerror(errno));
+      return 0;
+    }
+    printf("Client message received. Pid: %s. Removing WKP\n", clientpid);
+    remove(WKP);
+
+
+    printf("Connecting to client FIFO and sending initial acknowledgement message\n");
+    *to_client = open(clientpid, O_WRONLY); //Server connects to client FIFO
+    int check = write(*to_client, "to client", HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
+    if (check <= 0) {
+      printf("Error: %s",strerror(errno));
+      return 0;
+    }
+
+
     read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
-    toUpper(clientpid);
-    write(*to_client, clientpid, HANDSHAKE_BUFFER_SIZE);
+    printf("Received client message: %s\n", clientpid);
+
+
+    printf("Handshake success!\n");
+
+
+    while (1) {
+      read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
+      toUpper(clientpid);
+      write(*to_client, clientpid, HANDSHAKE_BUFFER_SIZE);
+    }
   }
 
   return from_client;
