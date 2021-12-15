@@ -8,13 +8,14 @@ int main() {
 
   from_server = client_handshake( &to_server );
 
-  char line[HANDSHAKE_BUFFER_SIZE];
+  char line[BUFFER_SIZE];
 
   while (1) {
     printf("Input: ");
-    fgets(line, HANDSHAKE_BUFFER_SIZE, stdin);
-    write(to_server, line, HANDSHAKE_BUFFER_SIZE);
-    read(from_server, line, HANDSHAKE_BUFFER_SIZE);
-    printf("Processed response: %s\n", line);
+    fgets(line, BUFFER_SIZE, stdin);
+    write(to_server, line, BUFFER_SIZE);
+    read(from_server, line, BUFFER_SIZE);
+    printf("Processed response: %s", line);
   }
+  main();
 }

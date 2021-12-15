@@ -17,11 +17,11 @@ int main() {
 
   from_client = server_handshake( &to_client );
 
-  char clientmsg[HANDSHAKE_BUFFER_SIZE];
-  
+  char clientmsgBUFFER_SIZE];
+
   while (1) {
-    read(from_client, clientmsg, HANDSHAKE_BUFFER_SIZE);
+    read(from_client, clientmsg, BUFFER_SIZE);
     toUpper(clientmsg);
-    write(to_client, clientmsg, HANDSHAKE_BUFFER_SIZE);
+    write(to_client, clientmsg, BUFFER_SIZE);
   }
 }
