@@ -1,5 +1,14 @@
 #include "pipe_networking.h"
 
+char* toUpper(char input[]) {
+  char* start = input;
+  int i;
+  for (i = 0; i < strlen(input); i++) {
+    if (input[i] >= 'a' && input[i] <= 'z')
+    input[i] -= 32;
+  }
+  return start;
+}
 
 /*=========================
   server_handshake
@@ -27,7 +36,7 @@ int server_handshake(int *to_client) {
 
   printf("Connecting to client FIFO and sending initial acknowledgement message\n");
   *to_client = open(clientpid, O_WRONLY); //Server connects to client FIFO
-  int check = write(*to_client, "If client says this, it works!", HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
+  int check = write(*to_client, "to client", HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
   if (check <= 0) {
       printf("Error: %s",strerror(errno));
       return 0;
@@ -39,6 +48,13 @@ int server_handshake(int *to_client) {
 
 
   printf("Handshake success!\n");
+
+
+  while (1) {
+    read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
+    toUpper(clientpid);
+    write(*to_client, clientpid, HANDSHAKE_BUFFER_SIZE);
+  }
 
   return from_client;
 }
@@ -86,10 +102,19 @@ int client_handshake(int *to_server) {
 
 
   printf("Sending response to server\n");
-  write(*to_server, "If server says this, it works!", HANDSHAKE_BUFFER_SIZE);
+  write(*to_server, "to client", HANDSHAKE_BUFFER_SIZE);
 
   
   printf("Handshake success!\n");
 
+
+  char line[HANDSHAKE_BUFFER_SIZE];
+  printf("Input: ");
+  fgets(line, HANDSHAKE_BUFFER_SIZE, stdin);
+  write(*to_server, line, HANDSHAKE_BUFFER_SIZE);
+  read(from_server, servermsg, HANDSHAKE_BUFFER_SIZE);
+  printf("Processed message: %s\n", servermsg);
+
+  
   return from_server;
 }
