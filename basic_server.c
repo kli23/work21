@@ -15,14 +15,15 @@ int main() {
   int to_client;
   int from_client;
 
-  from_client = server_handshake( &to_client );
-
-  char clientmsg[BUFFER_SIZE];
-
   while (1) {
-    read(from_client, clientmsg, BUFFER_SIZE);
-    toUpper(clientmsg);
-    write(to_client, clientmsg, BUFFER_SIZE);
+    from_client = server_handshake( &to_client );
+
+    char clientmsg[BUFFER_SIZE];
+
+    while (1) {
+      read(from_client, clientmsg, BUFFER_SIZE);
+      toUpper(clientmsg);
+      write(to_client, clientmsg, BUFFER_SIZE);
+    }
   }
-  main();
 }
