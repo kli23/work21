@@ -17,5 +17,4 @@ int main() {
     read(from_server, line, BUFFER_SIZE);
     printf("Processed response: %s", line);
   }
-  main();
 }

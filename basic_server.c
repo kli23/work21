@@ -24,4 +24,5 @@ int main() {
     toUpper(clientmsg);
     write(to_client, clientmsg, BUFFER_SIZE);
   }
+  main();
 }
