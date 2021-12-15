@@ -1,14 +1,5 @@
 #include "pipe_networking.h"
 
-char* toUpper(char input[]) {
-  char* start = input;
-  int i;
-  for (i = 0; i < strlen(input); i++) {
-    if (input[i] >= 'a' && input[i] <= 'z')
-    input[i] -= 32;
-  }
-  return start;
-}
 
 /*=========================
   server_handshake
@@ -23,41 +14,29 @@ int server_handshake(int *to_client) {
   printf("WKP made, waiting for connection\n");
 
 
-  while (1) {
-    
-    from_client = open(WKP, O_RDONLY);
-    char clientpid[HANDSHAKE_BUFFER_SIZE];
-    int received = read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE); // server receives client's msg (it's pid) and removes WKP
-    if (received == -1) {
+  from_client = open(WKP, O_RDONLY);
+  char clientpid[HANDSHAKE_BUFFER_SIZE];
+  int received = read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE); // server receives client's msg (it's pid) and removes WKP
+  if (received == -1) {
       printf("Error: %s",strerror(errno));
       return 0;
-    }
-    printf("Client message received. Pid: %s. Removing WKP\n", clientpid);
-    remove(WKP);
-
-
-    printf("Connecting to client FIFO and sending initial acknowledgement message\n");
-    *to_client = open(clientpid, O_WRONLY); //Server connects to client FIFO
-    int check = write(*to_client, "to client", HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
-    if (check <= 0) {
-      printf("Error: %s",strerror(errno));
-      return 0;
-    }
-
-
-    read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
-    printf("Received client message: %s\n", clientpid);
-
-
-    printf("Handshake success!\n");
-
-
-    while (1) {
-      read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
-      toUpper(clientpid);
-      write(*to_client, clientpid, HANDSHAKE_BUFFER_SIZE);
-    }
   }
+  printf("Client message received. Pid: %s. Removing WKP\n", clientpid);
+  remove(WKP);
+
+
+  printf("Connecting to client FIFO and sending initial acknowledgement message\n");
+  *to_client = open(clientpid, O_WRONLY); //Server connects to client FIFO
+  int check = write(*to_client, "to client", HANDSHAKE_BUFFER_SIZE); //sends an initial acknowledgment message
+  if (check <= 0) {
+      printf("Error: %s",strerror(errno));
+      return 0;
+  }
+
+
+  read(from_client, clientpid, HANDSHAKE_BUFFER_SIZE);
+  printf("Received client message: %s\n", clientpid);
+
 
   return from_client;
 }
@@ -105,21 +84,7 @@ int client_handshake(int *to_server) {
 
 
   printf("Sending response to server\n");
-  write(*to_server, "to client", HANDSHAKE_BUFFER_SIZE);
-
-  
-  printf("Handshake success!\n");
-
-
-  char line[HANDSHAKE_BUFFER_SIZE];
-
-  while (1) {
-    printf("Input: ");
-    fgets(line, HANDSHAKE_BUFFER_SIZE, stdin);
-    write(*to_server, line, HANDSHAKE_BUFFER_SIZE);
-    read(from_server, servermsg, HANDSHAKE_BUFFER_SIZE);
-    printf("Processed message: %s\n", servermsg);
-  }
+  write(*to_server, "to server", HANDSHAKE_BUFFER_SIZE);
 
 
   return from_server;
