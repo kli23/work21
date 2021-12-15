@@ -18,10 +18,12 @@ int main() {
   while (1) {
     from_client = server_handshake( &to_client );
 
-    char clientmsg[BUFFER_SIZE];
+    
 
     while (1) {
+      char clientmsg[BUFFER_SIZE];
       read(from_client, clientmsg, BUFFER_SIZE);
+      printf("Processing\n");
       toUpper(clientmsg);
       write(to_client, clientmsg, BUFFER_SIZE);
     }
